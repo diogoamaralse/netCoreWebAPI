@@ -32,7 +32,7 @@ namespace Demo.API
 
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Countreis API", Version = "v1" });
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Countries API", Version = "v1" });
             });
         }
 
@@ -69,7 +69,7 @@ namespace Demo.API
 
             app.UseSwaggerUI(c =>
             {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Countreis API V1");
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Countries API V1");
             });
 
             app.UseHttpsRedirection();
