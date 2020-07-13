@@ -1,8 +1,12 @@
-﻿using System.Linq;
+﻿using System;
+using System.Data;
+using System.Linq;
 using Demo.API.Domain;
 using Demo.API.Models.OfficialLanguages;
+using Demo.API.Services;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 
 namespace Demo.API.Controllers
 {
@@ -10,24 +14,44 @@ namespace Demo.API.Controllers
     [ApiController]
     public class LanguagesController : ControllerBase
     {
+        private readonly ILogger<LanguagesController> _logger;
+        private readonly IMailServices _mailServices;
+
+        public LanguagesController(ILogger<LanguagesController> logger, IMailServices mailServices)
+        {
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            _mailServices = mailServices ?? throw new ArgumentNullException(nameof(mailServices));
+        }
+
         [HttpGet("id",Name = "GetLanguages")]
         public IActionResult Get(int countryId, int id)
         {
-            var country = CountriesDataStore.Current.Countries.SingleOrDefault(x => x.Id == countryId);
-
-            if (country == null)
+            try
             {
-                return NotFound();
+                var country = CountriesDataStore.Current.Countries.SingleOrDefault(x => x.Id == countryId);
+
+                if (country == null)
+                {
+                    _logger.LogInformation($"country with id {countryId} wasn't found on endpoint Languagues/GetLanguagues");
+                    return NotFound();
+                }
+
+                var languagues = country.OfficialLanguages.SingleOrDefault(x => x.Id == id);
+
+                if (languagues == null)
+                {
+                    _logger.LogInformation($"languagues with id {id} wasn't found on endpoint Languagues/GetLanguagues");
+
+                    return NotFound();
+                }
+
+                return Ok(languagues);
             }
-
-            var languagues = country.OfficialLanguages.SingleOrDefault(x => x.Id == id);
-
-            if (languagues == null)
+            catch (Exception e)
             {
-                return NotFound();
+                _logger.LogCritical($"Exception Languagues/GetLanguagues: countryid {countryId} and language id {id}", e);
+                return StatusCode(500, "A problem happened while handling your request.");
             }
-
-            return Ok(languagues);
         }
 
         [HttpPost]
@@ -141,6 +165,10 @@ namespace Demo.API.Controllers
             }
 
             country.OfficialLanguages.Remove(languaguesStore);
+
+            _mailServices.Send($"Language Deleted.",
+                $"Languages {languaguesStore.LanguageName} " +
+                $"with id {languaguesStore.Id}");
 
             return NoContent();
         }

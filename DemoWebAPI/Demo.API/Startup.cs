@@ -1,3 +1,4 @@
+using Demo.API.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -34,6 +35,13 @@ namespace Demo.API
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Countries API", Version = "v1" });
             });
+
+            #if DEBUG
+            services.AddTransient<IMailServices, MailServices>();
+            #else
+            services.AddTransient<IMailServices, CloudMailService>();
+            #endif
+
         }
 
         private static NewtonsoftJsonPatchInputFormatter GetJsonPatchInputFormatter()
