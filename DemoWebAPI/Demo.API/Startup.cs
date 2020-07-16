@@ -52,6 +52,8 @@ namespace Demo.API
                     options.UseSqlServer(connectionString)
             );
 
+            services.AddScoped<ICountryInfoRepository, CountryInfoRepository>();
+
         }
 
         private static NewtonsoftJsonPatchInputFormatter GetJsonPatchInputFormatter()

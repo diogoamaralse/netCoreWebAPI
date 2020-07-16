@@ -1,8 +1,5 @@
 ﻿using Demo.API.Models;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Demo.API
 {
@@ -13,12 +10,6 @@ namespace Demo.API
         public static CountriesDataStore Current { get; } //= new CountriesDataStore();
 
         public List<CountryDTO> Countries { get; set; }
-
-        public CountriesDataStore()
-        {
-           
-        }
-
 
     }
 }

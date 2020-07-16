@@ -1,7 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Runtime.InteropServices.ComTypes;
 using Demo.API.Domain;
+using Demo.API.Models;
 using Demo.API.Models.OfficialLanguages;
 using Demo.API.Services;
 using Microsoft.AspNetCore.JsonPatch;
@@ -16,11 +19,52 @@ namespace Demo.API.Controllers
     {
         private readonly ILogger<LanguagesController> _logger;
         private readonly IMailServices _mailServices;
+        private readonly ICountryInfoRepository _countryInfoRepository;
 
-        public LanguagesController(ILogger<LanguagesController> logger, IMailServices mailServices)
+        public LanguagesController(ILogger<LanguagesController> logger, IMailServices mailServices, ICountryInfoRepository countryInfoRepository)
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _mailServices = mailServices ?? throw new ArgumentNullException(nameof(mailServices));
+            _countryInfoRepository = countryInfoRepository ?? throw new ArgumentNullException(nameof(countryInfoRepository));
+        }
+
+        [HttpGet]
+        public IActionResult Get(int countryId)
+        {
+            try
+            {
+                var countryExists = _countryInfoRepository.CountryExists(countryId);
+
+                if (!countryExists)
+                {
+                    _logger.LogInformation($"country with id {countryId} wasn't found on endpoint Languagues/Get");
+                    return NotFound();
+                }
+
+                var languagues = _countryInfoRepository.GetOfficialLanguages(countryId);
+
+                if (languagues == null)
+                {
+                    return NotFound();
+                }
+
+                var languaguesResults = new List<OfficialLanguagesByCountryDTO>();
+                foreach (var lang in languagues)
+                {
+                    languaguesResults.Add(new OfficialLanguagesByCountryDTO()
+                    {
+                        Id = lang.Id,
+                        LanguageName = lang.LanguageName
+                    });
+                }
+
+                return Ok(languaguesResults);
+            }
+            catch (Exception e)
+            {
+                _logger.LogInformation($"country with id {countryId} did a exception {e.Message} on endpoint Languagues/Get ");
+                return StatusCode(500, "A problem happened while handling your request.");
+            }
         }
 
         [HttpGet("id",Name = "GetLanguages")]
