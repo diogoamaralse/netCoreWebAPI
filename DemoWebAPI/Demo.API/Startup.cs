@@ -11,18 +11,20 @@ using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
+using System;
 
 namespace Demo.API
 {
     public class Startup
     {
+        public readonly IConfiguration _configuration;
+        private string connectionString;
 
         public Startup(IConfiguration configuration)
         {
-            Configuration = configuration;
+            _configuration = configuration ??
+                throw new ArgumentNullException(nameof(configuration));
         }
-
-        public IConfiguration Configuration { get; }
 
         public void ConfigureServices(IServiceCollection services)
         {
@@ -43,7 +45,7 @@ namespace Demo.API
 #else
             services.AddTransient<IMailServices, CloudMailService>();
 #endif
-            var connectionString = @"Server=(localdb)\MSSQLLocalDB;Database=CountryLanguagesDb;Trusted_Connection=True;";
+            connectionString = _configuration["connectionStrings:countryDbConnectionString"];
 
             services.AddDbContext<CountryInfoContext>(options =>
 

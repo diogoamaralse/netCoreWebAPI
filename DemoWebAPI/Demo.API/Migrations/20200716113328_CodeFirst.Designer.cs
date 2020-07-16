@@ -9,8 +9,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Demo.API.Migrations
 {
     [DbContext(typeof(CountryInfoContext))]
-    [Migration("20200714003456_CountryInfoContext")]
-    partial class CountryInfoContext
+    [Migration("20200716113328_CodeFirst")]
+    partial class CodeFirst
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -44,6 +44,32 @@ namespace Demo.API.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Countries");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Density = 60,
+                            LandArea = 652860,
+                            Name = "Afghanistan",
+                            Population = 38928346
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Density = 105,
+                            LandArea = 27400,
+                            Name = "Albania",
+                            Population = 2877797
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Density = 18,
+                            LandArea = 2381740,
+                            Name = "Algeria",
+                            Population = 43851044
+                        });
                 });
 
             modelBuilder.Entity("Demo.API.Tables.OfficialLanguages", b =>
@@ -66,6 +92,38 @@ namespace Demo.API.Migrations
                     b.HasIndex("CountryId");
 
                     b.ToTable("OfficialLanguages");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            CountryId = 1,
+                            LanguageName = "Pashto"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            CountryId = 1,
+                            LanguageName = "Dari"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            CountryId = 2,
+                            LanguageName = "Albanian"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            CountryId = 3,
+                            LanguageName = "Arabic"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            CountryId = 3,
+                            LanguageName = "Tamazight"
+                        });
                 });
 
             modelBuilder.Entity("Demo.API.Tables.OfficialLanguages", b =>

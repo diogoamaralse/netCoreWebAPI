@@ -2,7 +2,7 @@
 
 namespace Demo.API.Migrations
 {
-    public partial class CountryInfoContext : Migration
+    public partial class CodeFirst : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -40,6 +40,33 @@ namespace Demo.API.Migrations
                         principalTable: "Countries",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.InsertData(
+                table: "Countries",
+                columns: new[] { "Id", "Density", "LandArea", "Name", "Population" },
+                values: new object[] { 1, 60, 652860, "Afghanistan", 38928346 });
+
+            migrationBuilder.InsertData(
+                table: "Countries",
+                columns: new[] { "Id", "Density", "LandArea", "Name", "Population" },
+                values: new object[] { 2, 105, 27400, "Albania", 2877797 });
+
+            migrationBuilder.InsertData(
+                table: "Countries",
+                columns: new[] { "Id", "Density", "LandArea", "Name", "Population" },
+                values: new object[] { 3, 18, 2381740, "Algeria", 43851044 });
+
+            migrationBuilder.InsertData(
+                table: "OfficialLanguages",
+                columns: new[] { "Id", "CountryId", "LanguageName" },
+                values: new object[,]
+                {
+                    { 1, 1, "Pashto" },
+                    { 2, 1, "Dari" },
+                    { 3, 2, "Albanian" },
+                    { 4, 3, "Arabic" },
+                    { 5, 3, "Tamazight" }
                 });
 
             migrationBuilder.CreateIndex(
