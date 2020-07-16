@@ -1,3 +1,4 @@
+using Demo.API.Contexts;
 using Demo.API.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -9,6 +10,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
 using System.Linq;
+using Microsoft.EntityFrameworkCore;
 
 namespace Demo.API
 {
@@ -36,11 +38,17 @@ namespace Demo.API
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Countries API", Version = "v1" });
             });
 
-            #if DEBUG
+#if DEBUG
             services.AddTransient<IMailServices, MailServices>();
-            #else
+#else
             services.AddTransient<IMailServices, CloudMailService>();
-            #endif
+#endif
+            var connectionString = @"Server=(localdb)\MSSQLLocalDB;Database=CountryLanguagesDb;Trusted_Connection=True;";
+
+            services.AddDbContext<CountryInfoContext>(options =>
+
+                    options.UseSqlServer(connectionString)
+            );
 
         }
 

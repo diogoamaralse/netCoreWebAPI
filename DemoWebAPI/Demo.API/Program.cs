@@ -1,7 +1,11 @@
+using Demo.API.Contexts;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using NLog.Web;
 using System;
+
 namespace Demo.API
 {
     public class Program
@@ -15,7 +19,23 @@ namespace Demo.API
             try
             {
                 logger.Info("Initializing application...");
-                CreateHostBuilder(args).Build().Run();
+                var host = CreateHostBuilder(args).Build();
+
+                using (var scope = host.Services.CreateScope())
+                {
+                    try
+                    {
+                        var context = scope.ServiceProvider.GetService<CountryInfoContext>();
+
+                        context.Database.EnsureDeleted();
+                        context.Database.Migrate();
+                    }
+                    catch (Exception e)
+                    {
+                        logger.Error(e, "An error occurred while migration the database");
+                    }
+                }
+                host.Run();
 
             }
             catch (Exception e)
