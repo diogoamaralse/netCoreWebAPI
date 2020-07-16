@@ -8,3 +8,7 @@ Web API with .Net Core 3.1
 -Swagger
 <p>
 -Dependency injection
+<p>
+-Repository Pattern
+<p>
+-AutoMapper
